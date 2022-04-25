@@ -43,11 +43,13 @@ class Visiteur extends CI_Controller {
             { // SUCCES : on a trouvé le client
                 // On place l'identifiant dans une variable de session (= l'utilisateur est connecté)
                 $this->session->identifiant = $ClientRetourne->mel;
+                $this->session->nom = $ClientRetourne->nom;
+                $this->session->prenom = $ClientRetourne->prenom;
+                $this->session->noclient = $ClientRetourne->noclient;
 
-                $DonneesInjectees['nom'] = $ClientRetourne->nom;
-                $DonneesInjectees['prenom'] = $ClientRetourne->prenom; 
-                $this->load->view('templates/Entete');
-                $this->load->view('visiteur/connexionReussie', $DonneesInjectees);
+                $Data['NomPage'] = 'Connexion réussie !';
+                $this->load->view('templates/Entete', $Data);
+                $this->load->view('visiteur/connexionReussie');
                 $this->load->view('templates/PiedDePage');
             }
             else
@@ -61,8 +63,9 @@ class Visiteur extends CI_Controller {
 
     public function seDeConnecter() 
     { // destruction de la session = déconnexion
+        $Data['NomPage'] = 'Déconnexion réussie !';
         $this->session->sess_destroy();
-        $this->load->view('templates/Entete');
+        $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/deconnexionReussie');
         $this->load->view('templates/PiedDePage');
     } // fin seDeconnecter
@@ -79,7 +82,9 @@ class Visiteur extends CI_Controller {
         $this->form_validation->set_rules('txtPrenom', 'Prénom', 'required');
         $this->form_validation->set_rules('txtAdresse', 'Adresse', 'required');
         $this->form_validation->set_rules('txtVille', 'Ville', 'required');
-        $this->form_validation->set_rules('txtCodePostal', 'Code Postal', 'required');
+        $this->form_validation->set_rules('txtCodePostal', 'Code Postal', 'required', 'integer');
+        $this->form_validation->set_rules('txtTelPortable', 'Téléphone Mobile', 'integer');
+        $this->form_validation->set_rules('txtTelFixe', 'Téléphone Fixe', 'integer');
 
         if ($this->form_validation->run() === FALSE)
         { // ECHEC VALIDATION FORMULAIRE ou PREMIER APPEL FORMULAIRE
@@ -103,7 +108,8 @@ class Visiteur extends CI_Controller {
             $ClientInsere = $this->ModeleClient->insererClient($DonneesAInserer);
             if (!($ClientInsere == null))
             { // SUCCES : on a inséré le client 
-                $this->load->view('templates/Entete');
+                $Data['NomPage'] = 'Création réussie !';
+                $this->load->view('templates/Entete', $Data);
                 $this->load->view('visiteur/creationReussie');
                 $this->load->view('templates/PiedDePage');
             }
@@ -115,4 +121,34 @@ class Visiteur extends CI_Controller {
             }
         }
     } // fin creerCompte
+
+    public function modifierInformations()
+    {
+        $Data['NomPage'] = 'Modifier les informations du compte';
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('txtMel', 'Mel', 'required');
+        $this->form_validation->set_rules('txtMotDePasse', 'Mot de passe', 'required');
+        $this->form_validation->set_rules('txtNom', 'Nom', 'required');
+        $this->form_validation->set_rules('txtPrenom', 'Prénom', 'required');
+        $this->form_validation->set_rules('txtAdresse', 'Adresse', 'required');
+        $this->form_validation->set_rules('txtVille', 'Ville', 'required');
+        $this->form_validation->set_rules('txtCodePostal', 'Code Postal', 'required', 'integer');
+        $this->form_validation->set_rules('txtTelPortable', 'Téléphone Mobile', 'integer');
+        $this->form_validation->set_rules('txtTelFixe', 'Téléphone Fixe', 'integer');
+
+        $Client = $this->ModeleClient->retournerClientN($this->session->noclient);
+
+        if ($this->form_validation->run() === FALSE)
+        { // ECHEC VALIDATION FORMULAIRE ou PREMIER APPEL FORMULAIRE
+            $this->load->view('templates/Entete', $Data);
+            $this->load->view('visiteur/modifierInformations', $Client);
+            $this->load->view('templates/PiedDePage');
+        }
+        else
+        {
+            
+        }
+    } // fin modifierInformations
 }

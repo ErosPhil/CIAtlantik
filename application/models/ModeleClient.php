@@ -13,7 +13,11 @@ class ModeleClient extends CI_Model
         return $requete->row();
     }
 
-//$Nom, $Prenom, $Adresse, $Ville, $CodePostal, $TelFixe = '', $TelPortable = '', $Mel, $MotDePasse
+    public function retournerClientN($NoClient)
+    {
+        $requete = $this->db->get_where('client', array('noclient' => $NoClient));
+        return $requete->row();
+    }
 
     public function insererClient($DonneesAInserer)
     {

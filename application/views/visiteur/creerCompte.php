@@ -31,7 +31,7 @@
     echo form_label('Mot de passe','txtMotDePasse');
     echo form_password('txtMotDePasse', set_value('txtMotDePasse'));    
 
-    echo form_submit('submit', 'Se connecter');
+    echo form_submit('submit', 'Valider');
     echo form_close();
 
     echo "Vous avez déjà un compte ? ".anchor('visiteur/seConnecter',"Connectez-vous").'.';
