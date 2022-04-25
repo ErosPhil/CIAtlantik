@@ -12,8 +12,8 @@
         
     </head>
     <body>
-        <nav class="navbar navbar-exepand-sm bg-dark navbar-dark">
-            <a class="navbar-brand" href="#">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <a class="navbar-brand" href="<?php echo site_url('visiteur/accueil') ?>">
                 <img src="<?php echo img_url('Atlantik.jpg')?>" alt="Logo" style="width:60px;">
             </a>
             <ul class="navbar-nav">
@@ -21,7 +21,7 @@
                 <!-- Si utilisateur connecté-->
                     <li class="nav-item">
                         <span class="navbar-text">
-                            <?php echo 'Utilisateur :'.$this->session->identifiant;?>
+                            <?php echo 'Compte: '.$this->session->identifiant;?>
                         </span>
                     </li>
                     <li class="nav-item">
@@ -29,8 +29,14 @@
                     </li>
                 <?php else: ?>
                 <!-- Sinon (pas connecté)-->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo site_url('visiteur/seConnecter') ?>">Se Connecter</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                        Compte
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="<?php echo site_url('visiteur/seConnecter') ?>">Se connecter</a>
+                        <a class="dropdown-item" href="<?php echo site_url('visiteur/creerCompte') ?>">Créer un compte</a>
+                    </div>
                 </li>
                 <?php endif; ?>
             </ul>

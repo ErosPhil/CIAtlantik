@@ -4,7 +4,6 @@
   saisies sont réinjectées dans le formulaire */
 
   echo form_open('visiteur/seConnecter');
-  // creation d'un label devant la zone de saisie
   echo form_label('Identifiant','txtIdentifiant');
   echo form_input('txtIdentifiant', set_value('txtIdentifiant'));    
 
@@ -13,4 +12,6 @@
 
   echo form_submit('submit', 'Se connecter');
   echo form_close();
+
+  echo "Vous n'avez pas de compte ? ".anchor('visiteur/creerCompte',"Créez-en un").'.';
 ?>
