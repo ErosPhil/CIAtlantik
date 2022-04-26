@@ -8,7 +8,7 @@ class Visiteur extends CI_Controller {
         $this->load->helper('assets');
         $this->load->library("pagination");
         $this->load->library("session");
-        $this->load->model("ModeleClient");
+        $this->load->model("ModeleVisiteur");
     } // fin __construct
 
     public function accueil()
@@ -38,7 +38,7 @@ class Visiteur extends CI_Controller {
         { // FORULAIRE VALIDE
             $Identifiant = $this->input->post('txtIdentifiant');
             $MotdePasse = $this->input->post('txtMotDePasse');
-            $ClientRetourne = $this->ModeleClient->retournerClient($Identifiant, $MotdePasse);
+            $ClientRetourne = $this->ModeleVisiteur->retournerClient($Identifiant, $MotdePasse);
             if (!($ClientRetourne == null))
             { // SUCCES : on a trouvé le client
                 // On place l'identifiant dans une variable de session (= l'utilisateur est connecté)
@@ -49,7 +49,7 @@ class Visiteur extends CI_Controller {
 
                 $Data['NomPage'] = 'Connexion réussie !';
                 $this->load->view('templates/Entete', $Data);
-                $this->load->view('visiteur/connexionReussie');
+                $this->load->view('client/connexionReussie');
                 $this->load->view('templates/PiedDePage');
             }
             else
@@ -105,7 +105,7 @@ class Visiteur extends CI_Controller {
                 'mel' => $this->input->post('txtMel'),
                 'motdepasse' => $this->input->post('txtMotDePasse')
              );
-            $ClientInsere = $this->ModeleClient->insererClient($DonneesAInserer);
+            $ClientInsere = $this->ModeleVisiteur->insererClient($DonneesAInserer);
             if (!($ClientInsere == null))
             { // SUCCES : on a inséré le client 
                 $Data['NomPage'] = 'Création réussie !';
@@ -122,33 +122,5 @@ class Visiteur extends CI_Controller {
         }
     } // fin creerCompte
 
-    public function modifierInformations()
-    {
-        $Data['NomPage'] = 'Modifier les informations du compte';
-        $this->load->helper('form');
-        $this->load->library('form_validation');
-
-        $this->form_validation->set_rules('txtMel', 'Mel', 'required');
-        $this->form_validation->set_rules('txtMotDePasse', 'Mot de passe', 'required');
-        $this->form_validation->set_rules('txtNom', 'Nom', 'required');
-        $this->form_validation->set_rules('txtPrenom', 'Prénom', 'required');
-        $this->form_validation->set_rules('txtAdresse', 'Adresse', 'required');
-        $this->form_validation->set_rules('txtVille', 'Ville', 'required');
-        $this->form_validation->set_rules('txtCodePostal', 'Code Postal', 'required', 'integer');
-        $this->form_validation->set_rules('txtTelPortable', 'Téléphone Mobile', 'integer');
-        $this->form_validation->set_rules('txtTelFixe', 'Téléphone Fixe', 'integer');
-
-        $Client = $this->ModeleClient->retournerClientN($this->session->noclient);
-
-        if ($this->form_validation->run() === FALSE)
-        { // ECHEC VALIDATION FORMULAIRE ou PREMIER APPEL FORMULAIRE
-            $this->load->view('templates/Entete', $Data);
-            $this->load->view('visiteur/modifierInformations', $Client);
-            $this->load->view('templates/PiedDePage');
-        }
-        else
-        {
-            
-        }
-    } // fin modifierInformations
+    
 }

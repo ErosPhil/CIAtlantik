@@ -20,7 +20,7 @@
                 <?php if(!is_null($this->session->identifiant)): ?>
                 <!-- Si utilisateur connecté-->
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo site_url('visiteur/modifierInformations')?>"><?php echo $this->session->prenom.' '.$this->session->nom;?></a>
+                        <a class="nav-link" href="<?php echo site_url('client/modifierInformations')?>"><?php echo $this->session->prenom.' '.$this->session->nom;?></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo site_url('visiteur/seDeconnecter')?>">Se déconnecter</a>
