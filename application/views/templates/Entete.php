@@ -18,15 +18,18 @@
             </a>
             <ul class="navbar-nav">
                 <?php if(!is_null($this->session->identifiant)): ?>
-                <!-- Si utilisateur connecté-->
+                <!-- Si utilisateur connecté -->
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo site_url('client/modifierInformations')?>"><?php echo $this->session->prenom.' '.$this->session->nom;?></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo site_url('visiteur/seDeconnecter')?>">Se déconnecter</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo site_url('client/afficherHistoriqueReservations')?>">Historique</a>
+                    </li>
                 <?php else: ?>
-                <!-- Sinon (pas connecté)-->
+                <!-- Sinon (pas connecté) -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                         Compte
@@ -37,5 +40,8 @@
                     </div>
                 </li>
                 <?php endif; ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo site_url('visiteur/afficherLiaisons')?>">Liaisons</a>
+                </li>
             </ul>
         </nav>

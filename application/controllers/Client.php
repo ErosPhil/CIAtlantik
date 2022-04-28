@@ -4,10 +4,10 @@ class Client extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->library("session");
         $this->load->helper('url');
         $this->load->helper('assets');
         $this->load->library("pagination");
-        $this->load->library("session");
         $this->load->model("ModeleClient");
     } // fin __construct
 
@@ -73,5 +73,15 @@ class Client extends CI_Controller {
             }
         }
     } // fin modifierInformations
+
+    public function afficherHistoriqueReservations()
+    {
+        $Data['NomPage'] = 'Historique des réservations';
+        $Data['lesReservations'] = $this->ModeleClient->retournerReservations($this->session->noclient);
+
+        $this->load->view('templates/Entete', $Data);
+        $this->load->view('client/afficherHistoriqueReservations', $Data);
+        $this->load->view('templates/PiedDePage');
+    } // fin afficherHistoriqueReservations
 }
 ?>

@@ -122,5 +122,13 @@ class Visiteur extends CI_Controller {
         }
     } // fin creerCompte
 
-    
+    public function afficherLiaisons()
+    {
+        $Data['NomPage'] = 'Liste des liaisons pour chaque secteur';
+        $Data['lesLiaisons'] = $this->ModeleVisiteur->retournerLiaisons();
+
+        $this->load->view('templates/Entete', $Data);
+        $this->load->view('visiteur/afficherLiaisons', $Data);
+        $this->load->view('templates/PiedDePage');
+    }
 }
