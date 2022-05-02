@@ -9,6 +9,7 @@ class Visiteur extends CI_Controller {
         $this->load->library("pagination");
         $this->load->library("session");
         $this->load->model("ModeleVisiteur");
+        $this->load->helper('date');
     } // fin __construct
 
     public function accueil()
@@ -129,6 +130,19 @@ class Visiteur extends CI_Controller {
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/afficherLiaisons', $Data);
+        $this->load->view('templates/PiedDePage');
+    } // fin afficherLiaisons
+
+    public function afficherTarifs()
+    {
+        $Data['NomPage'] = 'Tarifs pour une liaison';
+        $dateDuJour = date('yyyy-MM-dd');
+        $Data['lesPeriodes'] = $this->ModeleVisiteur->retournerPeriodes($dateDuJour);
+        $Data['Liaison'] = $this->ModeleVisiteur->retournerLiaisonActuelle();
+        $Data['lesTarifs'] = $this->ModeleVisiteur->retournerTarifs();
+
+        $this->load->view('templates/Entete', $Data);
+        $this->load->view('visiteur/afficherTarifs', $Data);
         $this->load->view('templates/PiedDePage');
     }
 }
