@@ -40,26 +40,41 @@ class ModeleVisiteur extends CI_Model
         //SELECT * FROM periode WHERE datefin >= datejour
     }
 
-    public function retournerLiaisonActuelle()//$noLiaison
+    public function retournerLiaisonActuelle($noLiaison)
     {
         $this->db->select('pd.nom AS nomportdepart, pa.nom AS nomportarrivee, l.noliaison');
         $this->db->from('port pd, port pa, liaison l');
         $this->db->where('l.noport_depart = pd.noport AND l.noport_arrivee = pa.noport');
-        $this->db->where('noliaison', 1);
+        $this->db->where('noliaison', $noLiaison);
         $query = $this->db->get();
         return $query->row();
     }
 
-    public function retournerTarifs()//$noLiaison
+    public function retournerCategoriesTypes()
     {
-        $this->db->select('c.lettrecategorie, c.libelle, ty.notype, ty.libelle, ta.tarif');
-        $this->db->from('tarifer ta, type ty, categorie c');
-        $this->db->where('c.lettrecategorie = ty.lettrecategorie AND ty.lettrecategorie = ta.lettrecategorie');
-        $this->db->where('ta.noliaison', 1);
+        $this->db->select('c.libelle AS libellecategorie, c.lettrecategorie, t.notype, t.libelle AS libelletype');
+        $this->db->from('categorie c, type t');
+        $this->db->where('c.lettrecategorie = t.lettrecategorie');
         $query = $this->db->get();
         return $query->result();
-        //SELECT c.lettrecategorie, c.libelle, ty.notype, ty.libelle, ta.tarif FROM tarifer ta, type ty, categorie c, periode p WHERE c.lettrecategorie = ty.lettrecategorie AND ty.lettrecategorie = ta.lettrecategorie AND ta.noperiode = p.noperiode AND ta.noliaison = 1 AND p.datefin >= '2022-05-02';
-        //SELECT pd.nom, pa.nom;, l.noliaison FROM port pd, port pa, liaison l WHERE l.noport_depart = pd.noport AND l.noport_arrivee = pa.noport AND l.noliaison = 1;
+    }
+
+    public function nombreTypesCategorie()
+    {
+        $this->db->select('COUNT(*) AS nombre, lettrecategorie');
+        $this->db->from('type');
+        $this->db->group_by("lettrecategorie");
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function retournerTarifs($noLiaison)
+    {
+        $this->db->select('*');
+        $this->db->from('tarifer');
+        $this->db->where('noliaison', $noLiaison);
+        $query = $this->db->get();
+        return $query->result();
     }
 }
 ?>

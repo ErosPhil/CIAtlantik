@@ -133,13 +133,20 @@ class Visiteur extends CI_Controller {
         $this->load->view('templates/PiedDePage');
     } // fin afficherLiaisons
 
-    public function afficherTarifs()
+    public function afficherTarifs($noliaison)
     {
         $Data['NomPage'] = 'Tarifs pour une liaison';
-        $dateDuJour = date('yyyy-MM-dd');
+        $dateDuJour = date('y-m-d'); //yy-mm-dd
+        $Data['Liaison'] = $this->ModeleVisiteur->retournerLiaisonActuelle($noliaison);
         $Data['lesPeriodes'] = $this->ModeleVisiteur->retournerPeriodes($dateDuJour);
-        $Data['Liaison'] = $this->ModeleVisiteur->retournerLiaisonActuelle();
-        $Data['lesTarifs'] = $this->ModeleVisiteur->retournerTarifs();
+        $Data['lesCategoriesTypes'] = $this->ModeleVisiteur->retournerCategoriesTypes();
+        $nombreTypesCategorie = $this->ModeleVisiteur->nombreTypesCategorie();
+        $arrayNombre = array();
+        foreach($nombreTypesCategorie as $nombreEtCategorie):
+            $arrayNombre[$nombreEtCategorie->lettrecategorie] = $nombreEtCategorie->nombre;
+        endforeach;
+        $Data['nombreDeLignes'] = $arrayNombre;
+        $Data['lesTarifs'] = $this->ModeleVisiteur->retournerTarifs($noliaison);
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/afficherTarifs', $Data);

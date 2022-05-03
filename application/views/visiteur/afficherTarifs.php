@@ -1,29 +1,61 @@
 <table border = 1>
     <thead>
         <tr>
-            <td><?php echo 'Liaison '.$Liaison->noliaison.' : '.$Liaison->nomportdepart.' - '.$Liaison->nomportarrivee?></td>
+            <th colspan="100%"><?php echo 'Liaison '.$Liaison->noliaison.' : '.$Liaison->nomportdepart.' - '.$Liaison->nomportarrivee?></th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td></td>
+            <td rowspan="2">Catégorie</td>
+            <td rowspan="2">Type</td>
+            <td colspan="100%">Période</td>
+        </tr>
+        <tr>
+            <?php foreach($lesPeriodes as $row):
+                echo '<td>'.$row->datedebut .'<br>'. $row->datefin.'</td>';
+            endforeach ?>
         </tr>
         <?php
             $categorie_courante = "";
-            foreach($lesTarifs as $row):
-                if ($row->lettrecategorie==$categorie_courante)
-                {
-                    echo '';
-                }
-                else
-                {
-                    echo '';
-                }
+            foreach($lesCategoriesTypes as $uneCategorieType):
+                        if ($uneCategorieType->lettrecategorie == $categorie_courante) //si même catégorie que ligne précédente
+                        {
+                            echo '<tr><td>'.$uneCategorieType->lettrecategorie.$uneCategorieType->notype.' - '.$uneCategorieType->libelletype.'</td>';
+                            foreach($lesPeriodes as $unePeriode):
+                                $tariftrouve = FALSE;
+                                foreach($lesTarifs as $unTarif):
+                                    if($unePeriode->noperiode == $unTarif->noperiode && $uneCategorieType->lettrecategorie == $unTarif->lettrecategorie && $uneCategorieType->notype == $unTarif->notype)
+                                    {
+                                        echo '<td>'.$unTarif->tarif.'</td>';
+                                        $tariftrouve = TRUE;
+                                    }
+                                endforeach;
+                                if(!$tariftrouve) { echo '<td>---</td>'; }        
+                            endforeach;
+                            echo '</tr>';
+                        }
+                        else //si catégorie différente de la ligne précédente
+                        {
+                            echo '<tr><td rowspan="'.$nombreDeLignes[$uneCategorieType->lettrecategorie].'">'.$uneCategorieType->lettrecategorie.'<br>'.$uneCategorieType->libellecategorie.'</td><td>'.$uneCategorieType->lettrecategorie.$uneCategorieType->notype.' - '.$uneCategorieType->libelletype.'</td>';
+                            foreach($lesPeriodes as $unePeriode):
+                                $tariftrouve = FALSE;
+                                foreach($lesTarifs as $unTarif):
+                                    if($unePeriode->noperiode == $unTarif->noperiode && $uneCategorieType->lettrecategorie == $unTarif->lettrecategorie && $uneCategorieType->notype == $unTarif->notype)
+                                    {
+                                        echo '<td>'.$unTarif->tarif.'</td>';
+                                        $tariftrouve = TRUE;
+                                    }
+                                endforeach;
+                                if(!$tariftrouve) { echo '<td>---</td>'; }        
+                            endforeach;
+                            echo '</tr>';
+                            $categorie_courante = $uneCategorieType->lettrecategorie;
+                        }
             endforeach ?>
     </tbody>
 </table>
 
-<?php 
+<?php /*
 foreach($lesPeriodes as $row ):
 echo $row->noperiode.' - '.$row->datedebut.' - '.$row->datefin.'<br>';
-endforeach ?>
+endforeach ?>*/
