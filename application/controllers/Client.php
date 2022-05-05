@@ -9,6 +9,7 @@ class Client extends CI_Controller {
         $this->load->helper('assets');
         $this->load->library("pagination");
         $this->load->model("ModeleClient");
+        $this->load->model("ModeleReservation");
     } // fin __construct
 
     public function modifierInformations()
@@ -77,7 +78,7 @@ class Client extends CI_Controller {
     public function afficherHistoriqueReservations()
     {
         $Data['NomPage'] = 'Historique des réservations';
-        $Data['lesReservations'] = $this->ModeleClient->retournerReservations($this->session->noclient);
+        $Data['lesReservations'] = $this->ModeleReservation->retournerReservations($this->session->noclient);
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('client/afficherHistoriqueReservations', $Data);

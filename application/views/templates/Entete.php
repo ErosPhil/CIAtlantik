@@ -43,5 +43,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo site_url('visiteur/afficherLiaisons')?>">Liaisons</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo site_url('visiteur/afficherTraversees')?>">Traversées</a>
+                </li>
             </ul>
         </nav>

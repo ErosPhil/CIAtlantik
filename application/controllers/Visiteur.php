@@ -8,7 +8,11 @@ class Visiteur extends CI_Controller {
         $this->load->helper('assets');
         $this->load->library("pagination");
         $this->load->library("session");
-        $this->load->model("ModeleVisiteur");
+        $this->load->model("ModeleClient");
+        $this->load->model("ModeleLiaison");
+        $this->load->model("ModelePeriode");
+        $this->load->model("ModeleCategorieType");
+        $this->load->model("ModeleSecteur");
         $this->load->helper('date');
     } // fin __construct
 
@@ -39,7 +43,7 @@ class Visiteur extends CI_Controller {
         { // FORULAIRE VALIDE
             $Identifiant = $this->input->post('txtIdentifiant');
             $MotdePasse = $this->input->post('txtMotDePasse');
-            $ClientRetourne = $this->ModeleVisiteur->retournerClient($Identifiant, $MotdePasse);
+            $ClientRetourne = $this->ModeleClient->retournerClient($Identifiant, $MotdePasse);
             if (!($ClientRetourne == null))
             { // SUCCES : on a trouvé le client
                 // On place l'identifiant dans une variable de session (= l'utilisateur est connecté)
@@ -106,7 +110,7 @@ class Visiteur extends CI_Controller {
                 'mel' => $this->input->post('txtMel'),
                 'motdepasse' => $this->input->post('txtMotDePasse')
              );
-            $ClientInsere = $this->ModeleVisiteur->insererClient($DonneesAInserer);
+            $ClientInsere = $this->ModeleClient->insererClient($DonneesAInserer);
             if (!($ClientInsere == null))
             { // SUCCES : on a inséré le client 
                 $Data['NomPage'] = 'Création réussie !';
@@ -126,7 +130,7 @@ class Visiteur extends CI_Controller {
     public function afficherLiaisons()
     {
         $Data['NomPage'] = 'Liste des liaisons pour chaque secteur';
-        $Data['lesLiaisons'] = $this->ModeleVisiteur->retournerLiaisons();
+        $Data['lesLiaisons'] = $this->ModeleLiaison->retournerLiaisons();
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/afficherLiaisons', $Data);
@@ -136,20 +140,50 @@ class Visiteur extends CI_Controller {
     public function afficherTarifs($noliaison)
     {
         $Data['NomPage'] = 'Tarifs pour une liaison';
-        $dateDuJour = date('y-m-d'); //yy-mm-dd
-        $Data['Liaison'] = $this->ModeleVisiteur->retournerLiaisonActuelle($noliaison);
-        $Data['lesPeriodes'] = $this->ModeleVisiteur->retournerPeriodes($dateDuJour);
-        $Data['lesCategoriesTypes'] = $this->ModeleVisiteur->retournerCategoriesTypes();
-        $nombreTypesCategorie = $this->ModeleVisiteur->nombreTypesCategorie();
+        $dateDuJour = date('y-m-d');
+        $Data['Liaison'] = $this->ModeleLiaison->retournerLiaisonActuelle($noliaison);
+        $Data['lesPeriodes'] = $this->ModelePeriode->retournerPeriodes($dateDuJour);
+        $Data['lesCategoriesTypes'] = $this->ModeleCategorieType->retournerCategoriesTypes();
+        $nombreTypesCategorie = $this->ModeleCategorieType->nombreTypesCategorie();
         $arrayNombre = array();
         foreach($nombreTypesCategorie as $nombreEtCategorie):
             $arrayNombre[$nombreEtCategorie->lettrecategorie] = $nombreEtCategorie->nombre;
         endforeach;
         $Data['nombreDeLignes'] = $arrayNombre;
-        $Data['lesTarifs'] = $this->ModeleVisiteur->retournerTarifs($noliaison);
+        $Data['lesTarifs'] = $this->ModeleLiaison->retournerTarifs($noliaison);
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/afficherTarifs', $Data);
         $this->load->view('templates/PiedDePage');
+    }
+
+    public function afficherTraversees($nosecteur = null)
+    {
+        $Data['NomPage'] = 'Horaires des traversées';
+        $Data['lesSecteurs'] = $this->ModeleSecteur->retournerSecteurs();
+        $Data['nosecteur'] = $nosecteur;
+
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('listeLiaisons', 'Liaison', 'required');
+        $this->form_validation->set_rules('txtDate', 'Date', 'required');
+        
+        if ($this->form_validation->run() === FALSE)
+        {
+            $this->load->view('templates/Entete', $Data);
+            $this->load->view('visiteur/liste_secteurs', $Data);
+            $this->load->view('visiteur/liste_liaisons_date', $Data);
+            $this->load->view('templates/PiedDePage');
+        }
+        else
+        {
+            $this->load->view('templates/Entete', $Data);
+            $this->load->view('visiteur/liste_secteurs', $Data);
+            $this->load->view('visiteur/liste_liaisons_date', $Data);
+            $this->load->view('visiteur/tableau_traversees', $Data);
+            $this->load->view('templates/PiedDePage');
+        }
+        
     }
 }
