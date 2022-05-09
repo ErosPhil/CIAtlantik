@@ -7,7 +7,7 @@ class ModeleReservation extends CI_Model
         $this->load->database();
     }
 
-    public function retournerReservations($noclient)
+    public function getReservations($noclient)
     {
         $this->db->select('r.noreservation, r.dateheure, pd.nom AS nomportdepart, pa.nom AS nomportarrivee, t.dateheuredepart, r.montanttotal, r.paye');
         $this->db->from('reservation r, traversee t, liaison l, port pd, port pa');

@@ -28,7 +28,7 @@ class Client extends CI_Controller {
         $this->form_validation->set_rules('txtTelPortable', 'Téléphone Mobile', 'integer');
         $this->form_validation->set_rules('txtTelFixe', 'Téléphone Fixe', 'integer');
 
-        $Client = $this->ModeleClient->retournerClientN($this->session->noclient);
+        $Client = $this->ModeleClient->getClientN($this->session->noclient);
 
         if ($this->form_validation->run() === FALSE)
         { // ECHEC VALIDATION FORMULAIRE ou PREMIER APPEL FORMULAIRE
@@ -78,7 +78,7 @@ class Client extends CI_Controller {
     public function afficherHistoriqueReservations()
     {
         $Data['NomPage'] = 'Historique des réservations';
-        $Data['lesReservations'] = $this->ModeleReservation->retournerReservations($this->session->noclient);
+        $Data['lesReservations'] = $this->ModeleReservation->getReservations($this->session->noclient);
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('client/afficherHistoriqueReservations', $Data);

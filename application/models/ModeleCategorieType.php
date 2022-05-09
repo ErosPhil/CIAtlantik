@@ -7,7 +7,7 @@ class ModeleCategorieType extends CI_Model
         $this->load->database();
     }
 
-    public function retournerCategoriesTypes()
+    public function getCategoriesTypes()
     {
         $this->db->select('c.libelle AS libellecategorie, c.lettrecategorie, t.notype, t.libelle AS libelletype');
         $this->db->from('categorie c, type t');
@@ -22,6 +22,12 @@ class ModeleCategorieType extends CI_Model
         $this->db->from('type');
         $this->db->group_by("lettrecategorie");
         $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function getLesCategories()
+    {
+        $query = $this->db->get('categorie');
         return $query->result();
     }
 }

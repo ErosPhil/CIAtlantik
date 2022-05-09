@@ -43,7 +43,7 @@ class Visiteur extends CI_Controller {
         { // FORULAIRE VALIDE
             $Identifiant = $this->input->post('txtIdentifiant');
             $MotdePasse = $this->input->post('txtMotDePasse');
-            $ClientRetourne = $this->ModeleClient->retournerClient($Identifiant, $MotdePasse);
+            $ClientRetourne = $this->ModeleClient->getClient($Identifiant, $MotdePasse);
             if (!($ClientRetourne == null))
             { // SUCCES : on a trouvé le client
                 // On place l'identifiant dans une variable de session (= l'utilisateur est connecté)
@@ -110,7 +110,7 @@ class Visiteur extends CI_Controller {
                 'mel' => $this->input->post('txtMel'),
                 'motdepasse' => $this->input->post('txtMotDePasse')
              );
-            $ClientInsere = $this->ModeleClient->insererClient($DonneesAInserer);
+            $ClientInsere = $this->ModeleClient->insertClient($DonneesAInserer);
             if (!($ClientInsere == null))
             { // SUCCES : on a inséré le client 
                 $Data['NomPage'] = 'Création réussie !';
@@ -130,7 +130,7 @@ class Visiteur extends CI_Controller {
     public function afficherLiaisons()
     {
         $Data['NomPage'] = 'Liste des liaisons pour chaque secteur';
-        $Data['lesLiaisons'] = $this->ModeleLiaison->retournerLiaisons();
+        $Data['lesLiaisons'] = $this->ModeleLiaison->getLiaisonSec();
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/afficherLiaisons', $Data);
@@ -141,27 +141,32 @@ class Visiteur extends CI_Controller {
     {
         $Data['NomPage'] = 'Tarifs pour une liaison';
         $dateDuJour = date('y-m-d');
-        $Data['Liaison'] = $this->ModeleLiaison->retournerLiaisonActuelle($noliaison);
-        $Data['lesPeriodes'] = $this->ModelePeriode->retournerPeriodes($dateDuJour);
-        $Data['lesCategoriesTypes'] = $this->ModeleCategorieType->retournerCategoriesTypes();
+        $Data['Liaison'] = $this->ModeleLiaison->getLiaisonActuelle($noliaison);
+        $Data['lesPeriodes'] = $this->ModelePeriode->getPeriodes($dateDuJour);
+        $Data['lesCategoriesTypes'] = $this->ModeleCategorieType->getCategoriesTypes();
         $nombreTypesCategorie = $this->ModeleCategorieType->nombreTypesCategorie();
         $arrayNombre = array();
         foreach($nombreTypesCategorie as $nombreEtCategorie):
             $arrayNombre[$nombreEtCategorie->lettrecategorie] = $nombreEtCategorie->nombre;
         endforeach;
         $Data['nombreDeLignes'] = $arrayNombre;
-        $Data['lesTarifs'] = $this->ModeleLiaison->retournerTarifs($noliaison);
+        $Data['lesTarifs'] = $this->ModeleLiaison->getTarifs($noliaison);
 
         $this->load->view('templates/Entete', $Data);
         $this->load->view('visiteur/afficherTarifs', $Data);
         $this->load->view('templates/PiedDePage');
-    }
+    } // fin afficherTarifs
 
     public function afficherTraversees($nosecteur = null)
     {
         $Data['NomPage'] = 'Horaires des traversées';
-        $Data['lesSecteurs'] = $this->ModeleSecteur->retournerSecteurs();
+        $Data['lesSecteurs'] = $this->ModeleSecteur->getSecteurs();
         $Data['nosecteur'] = $nosecteur;
+        $liaisonsDuSecteur = $this->ModeleLiaison->getLiaisonS($nosecteur);
+        $Data['lesLiaisonsDuSecteur'] = [];
+        foreach($liaisonsDuSecteur as $liaison):
+            $Data['lesLiaisonsDuSecteur'][$liaison->noliaison] = $liaison->nomportdepart.' - '.$liaison->nomportarrivee;
+        endforeach;
 
         $this->load->helper('form');
         $this->load->library('form_validation');
@@ -178,12 +183,21 @@ class Visiteur extends CI_Controller {
         }
         else
         {
+            $Data['liaisonChoisie'] = $this->ModeleLiaison->getLiaisonActuelle($this->input->post('listeLiaisons'));
+            $Data['dateChoisie'] = $this->input->post('txtDate');
+
+            $lesCategories = $this->ModeleCategorieType->getLesCategories();
+            $lesTraverseesBateaux = $this->ModeleTraversee->getLesTraverseesBateaux();
+            table = array();
+            foreach($lesTraverseesBateaux as $traversee):
+                table['traversee'.$traversee->notraversee] = array($traversee->notraversee, $traversee->dateheuredepart, $traversee->nombateau, );
+            endforeach;
+
             $this->load->view('templates/Entete', $Data);
             $this->load->view('visiteur/liste_secteurs', $Data);
             $this->load->view('visiteur/liste_liaisons_date', $Data);
             $this->load->view('visiteur/tableau_traversees', $Data);
             $this->load->view('templates/PiedDePage');
         }
-        
-    }
+    } // fin afficherTraversees
 }

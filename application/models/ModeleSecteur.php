@@ -7,7 +7,7 @@ class ModeleSecteur extends CI_Model
         $this->load->database();
     }
 
-    public function retournerSecteurs()
+    public function getSecteurs()
     {
         $this->db->select('nosecteur, nom AS nomsecteur');
         $this->db->from('secteur');
