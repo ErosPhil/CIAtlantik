@@ -54,8 +54,3 @@
             endforeach ?>
     </tbody>
 </table>
-
-<?php /*
-foreach($lesPeriodes as $row ):
-echo $row->noperiode.' - '.$row->datedebut.' - '.$row->datefin.'<br>';
-endforeach ?>*/

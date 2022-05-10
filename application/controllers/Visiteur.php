@@ -6,6 +6,7 @@ class Visiteur extends CI_Controller {
         parent::__construct();
         $this->load->helper('url');
         $this->load->helper('assets');
+        $this->load->helper('date');
         $this->load->library("pagination");
         $this->load->library("session");
         $this->load->model("ModeleClient");
@@ -13,7 +14,7 @@ class Visiteur extends CI_Controller {
         $this->load->model("ModelePeriode");
         $this->load->model("ModeleCategorieType");
         $this->load->model("ModeleSecteur");
-        $this->load->helper('date');
+        $this->load->model("ModeleTraversee");
     } // fin __construct
 
     public function accueil()
@@ -185,13 +186,23 @@ class Visiteur extends CI_Controller {
         {
             $Data['liaisonChoisie'] = $this->ModeleLiaison->getLiaisonActuelle($this->input->post('listeLiaisons'));
             $Data['dateChoisie'] = $this->input->post('txtDate');
+            //$Data['a'] = $this->input->post('listeLiaisons');
 
             $lesCategories = $this->ModeleCategorieType->getLesCategories();
-            $lesTraverseesBateaux = $this->ModeleTraversee->getLesTraverseesBateaux();
-            table = array();
+            $lesTraverseesBateaux = $this->ModeleTraversee->getLesTraverseesBateaux($this->input->post('listeLiaisons'), $this->input->post('txtDate'));
+            
+            $table = array();           
             foreach($lesTraverseesBateaux as $traversee):
-                table['traversee'.$traversee->notraversee] = array($traversee->notraversee, $traversee->dateheuredepart, $traversee->nombateau, );
+                $ligne = array();
+                array_push($ligne, $traversee->notraversee, $traversee->dateheuredepart, $traversee->nombateau);
+                foreach($lesCategories as $uneCategorie):
+                    $placesDispo = intval($this->ModeleTraversee->getCapaciteMaximale($traversee->notraversee, $uneCategorie->lettrecategorie)) - intval($this->ModeleTraversee->getQuantiteEnregistree($traversee->notraversee, $uneCategorie->lettrecategorie));
+                    array_push($ligne, $placesDispo);
+                endforeach;
+                array_push($table, $ligne);
             endforeach;
+            $Data['table'] = $table;
+            $Data['lesCategories'] = $lesCategories;
 
             $this->load->view('templates/Entete', $Data);
             $this->load->view('visiteur/liste_secteurs', $Data);

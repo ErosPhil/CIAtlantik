@@ -1,4 +1,4 @@
-<div style="position: absolute; left:300px; top:100px">
+<div style="">
 Sélectionner la liaison, et la date souhaitées
 <?php
   echo validation_errors();
