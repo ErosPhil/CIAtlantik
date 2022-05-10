@@ -196,7 +196,20 @@ class Visiteur extends CI_Controller {
                 $ligne = array();
                 array_push($ligne, $traversee->notraversee, $traversee->dateheuredepart, $traversee->nombateau);
                 foreach($lesCategories as $uneCategorie):
-                    $placesDispo = intval($this->ModeleTraversee->getCapaciteMaximale($traversee->notraversee, $uneCategorie->lettrecategorie)) - intval($this->ModeleTraversee->getQuantiteEnregistree($traversee->notraversee, $uneCategorie->lettrecategorie));
+                    $CapMax = $this->ModeleTraversee->getCapaciteMaximale($traversee->notraversee, $uneCategorie->lettrecategorie);
+                    $QuantEnr = $this->ModeleTraversee->getQuantiteEnregistree($traversee->notraversee, $uneCategorie->lettrecategorie);
+
+                    if ($CapMax == null) 
+                    {$CapMax = False;}
+                    else 
+                    {$CapMax = $CapMax->capacitemax; };
+
+                    if ($QuantEnr == null) 
+                    {$QuantEnr = False;}
+                    else 
+                    {$QuantEnr = $QuantEnr->quantiteenregistree; };
+                    
+                    $placesDispo = intval($CapMax) - intval($QuantEnr);
                     array_push($ligne, $placesDispo);
                 endforeach;
                 array_push($table, $ligne);

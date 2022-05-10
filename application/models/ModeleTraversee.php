@@ -11,6 +11,7 @@ class ModeleTraversee extends CI_Model
     {
         $this->db->select('t.notraversee, t.dateheuredepart, b.nom AS nombateau');
         $this->db->from('traversee t, bateau b');
+        $this->db->where('t.nobateau = b.nobateau');
         $this->db->where('t.noliaison', $noLiaison);
         $this->db->like('t.dateheuredepart', $dateTraversee);
         $query = $this->db->get();
@@ -19,13 +20,13 @@ class ModeleTraversee extends CI_Model
 
     public function getQuantiteEnregistree($noTraversee, $lettreCategorie)
     {
-        $this->db->select('sum(quantite) AS quantiteEnregistree');
+        $this->db->select('sum(quantite) AS quantiteenregistree');
         $this->db->from('traversee t, reservation r, enregistrer e');
         $this->db->where('t.notraversee = r.notraversee AND r.noreservation = e.noreservation');
         $this->db->where('t.notraversee', $noTraversee);
         $this->db->where('e.lettrecategorie', $lettreCategorie);
         $query = $this->db->get();
-        return $query->result();
+        return $query->row();
     }
 
     public function getCapaciteMaximale($noTraversee, $lettreCategorie)
@@ -36,6 +37,6 @@ class ModeleTraversee extends CI_Model
         $this->db->where('t.notraversee', $noTraversee);
         $this->db->where('c.lettrecategorie', $lettreCategorie);
         $query = $this->db->get();
-        return $query->result();
+        return $query->row();
     }
 }
