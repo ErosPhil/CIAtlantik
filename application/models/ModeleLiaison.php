@@ -19,7 +19,7 @@ class ModeleLiaison extends CI_Model
         //SELECT s.nom, l.noliaison, l.distance, pd.nom AS "portdepart", pa.nom AS "portarrivee" FROM liaison l, secteur s, port pd, port pa WHERE s.nosecteur = l.nosecteur AND l.noport_depart = pd.noport AND l.noport_arrivee = pa.noport;
     }
 
-    public function getLiaisonActuelle($noLiaison) //renvoie toutes les informations sur un liaison
+    public function getLiaison($noLiaison) //renvoie toutes les informations sur une liaison
     {
         $this->db->select('pd.nom AS nomportdepart, pa.nom AS nomportarrivee, l.noliaison');
         $this->db->from('port pd, port pa, liaison l');

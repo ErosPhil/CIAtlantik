@@ -39,4 +39,10 @@ class ModeleTraversee extends CI_Model
         $query = $this->db->get();
         return $query->row();
     }
+
+    public function getTraversee($noTraversee)
+    {
+        $requete = $this->db->get_where('traversee', array('notraversee' => $noTraversee));
+        return $requete->row();
+    }
 }

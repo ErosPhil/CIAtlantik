@@ -142,7 +142,7 @@ class Visiteur extends CI_Controller {
     {
         $Data['NomPage'] = 'Tarifs pour une liaison';
         $dateDuJour = date('y-m-d');
-        $Data['Liaison'] = $this->ModeleLiaison->getLiaisonActuelle($noliaison);
+        $Data['Liaison'] = $this->ModeleLiaison->getLiaison($noliaison);
         $Data['lesPeriodes'] = $this->ModelePeriode->getPeriodes($dateDuJour);
         $Data['lesCategoriesTypes'] = $this->ModeleCategorieType->getCategoriesTypes();
         $nombreTypesCategorie = $this->ModeleCategorieType->nombreTypesCategorie();
@@ -184,7 +184,7 @@ class Visiteur extends CI_Controller {
         }
         else
         {
-            $Data['liaisonChoisie'] = $this->ModeleLiaison->getLiaisonActuelle($this->input->post('listeLiaisons'));
+            $Data['liaisonChoisie'] = $this->ModeleLiaison->getLiaison($this->input->post('listeLiaisons'));
             $Data['dateChoisie'] = $this->input->post('txtDate');
             //$Data['a'] = $this->input->post('listeLiaisons');
 

@@ -20,7 +20,7 @@
         <?php
             foreach($table as $ligne):
                 echo "<tr>";
-                    echo "<td>"?> <a href="<?php echo site_url('visiteur/accueil/') ?>"> <?php echo $ligne[0]."</a></td>";
+                    echo "<td>"?> <a href="<?php echo site_url('client/reserverTraversee/'.$ligne[0]) ?>"> <?php echo $ligne[0]."</a></td>";
                     echo "<td>".$ligne[1]."</td><td>".$ligne[2]."</td>";
                     $x=3;
                     foreach($lesCategories as $uneCategorie):

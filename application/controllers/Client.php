@@ -10,6 +10,13 @@ class Client extends CI_Controller {
         $this->load->library("pagination");
         $this->load->model("ModeleClient");
         $this->load->model("ModeleReservation");
+        $this->load->model("ModeleTraversee");
+        $this->load->model("ModeleLiaison");
+
+        if (is_null($this->session->identifiant))
+        {
+            redirect('/visiteur/seConnecter');
+        }
     } // fin __construct
 
     public function modifierInformations()
@@ -84,5 +91,18 @@ class Client extends CI_Controller {
         $this->load->view('client/afficherHistoriqueReservations', $Data);
         $this->load->view('templates/PiedDePage');
     } // fin afficherHistoriqueReservations
+
+    public function reserverTraversee($notraversee)
+    {
+            $Data['NomPage'] = 'Réserver un traversée';
+
+            $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
+            $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
+            $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
+
+            $this->load->view('templates/Entete', $Data);
+            $this->load->view('client/reserverTraversee', $Data);
+            $this->load->view('templates/PiedDePage');
+    }
 }
 ?>
