@@ -11,10 +11,17 @@ echo "<br>Saisir les informations relatives à la réservation <br><br> Nom : ".
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <?php 
-
-            ?>
-        </tr>
+        <?php
+        echo validation_errors();
+        echo form_open('client/compte_rendu');
+        foreach($TypesEtTarifs as $ligne):
+            echo "<tr><td>".$ligne->libelle."</td><td>".$ligne->tarif."</td><td>".form_input('txt'.$ligne->lettrecategorie.$ligne->notype, set_value('txt'.$ligne->lettrecategorie.$ligne->notype))."</td></tr>";
+        endforeach;
+        ?>
     </tbody>
+    <br>
+    <?php
+    echo form_submit('submit', 'Valider-Acheter');
+    echo form_close(); 
+    ?>
 </table>

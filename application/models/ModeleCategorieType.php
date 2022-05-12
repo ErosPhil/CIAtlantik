@@ -33,7 +33,7 @@ class ModeleCategorieType extends CI_Model
 
     public function getLesTypesAvecTarifs($noLiaison, $noPeriode)
     {
-        $this->db->select('ty.libelle, ta.tarif');
+        $this->db->select('ty.lettrecategorie, ty.notype, ty.libelle, ta.tarif');
         $this->db->from('type ty, tarifer ta');
         $this->db->where('ty.lettrecategorie = ta.lettrecategorie AND ty.notype = ta.notype');
         $this->db->where('ta.noliaison',$noLiaison);

@@ -103,11 +103,16 @@ class Client extends CI_Controller {
             $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
             $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
             $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
-            //$Data['TypesEtTarifs'] = $this->ModeleCategorieType->getLesTypesAvecTarifs($Data['traversee']->noliaison, );
-            //$Data['noperiode'] = $this->ModelePeriode->getPeriodePourDate($Data['traversee']->dateheuredepart);
+            $datedepart = date_create($Data['traversee']->dateheuredepart)->format('Y-m-d');
+            $noperiode = $this->ModelePeriode->getPeriodePourDate($datedepart);
+            $Data['TypesEtTarifs'] = $this->ModeleCategorieType->getLesTypesAvecTarifs($Data['traversee']->noliaison, $noperiode);
+            
+            $this->load->helper('form');
+            $this->load->library('form_validation');
+
             $this->load->view('templates/Entete', $Data);
             $this->load->view('client/reserverTraversee', $Data);
             $this->load->view('templates/PiedDePage');
-    }
+    } // fin reserverTraversee
 }
 ?>
