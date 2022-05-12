@@ -7,11 +7,14 @@ class Client extends CI_Controller {
         $this->load->library("session");
         $this->load->helper('url');
         $this->load->helper('assets');
+        $this->load->helper('date');
         $this->load->library("pagination");
         $this->load->model("ModeleClient");
         $this->load->model("ModeleReservation");
         $this->load->model("ModeleTraversee");
         $this->load->model("ModeleLiaison");
+        $this->load->model("ModeleCategorieType");
+        $this->load->model("ModelePeriode");
 
         if (is_null($this->session->identifiant))
         {
@@ -99,7 +102,9 @@ class Client extends CI_Controller {
             $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
             $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
             $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
-
+            $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
+            //$Data['TypesEtTarifs'] = $this->ModeleCategorieType->getLesTypesAvecTarifs($Data['traversee']->noliaison, );
+            //$Data['noperiode'] = $this->ModelePeriode->getPeriodePourDate($Data['traversee']->dateheuredepart);
             $this->load->view('templates/Entete', $Data);
             $this->load->view('client/reserverTraversee', $Data);
             $this->load->view('templates/PiedDePage');

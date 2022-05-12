@@ -158,7 +158,7 @@ class Visiteur extends CI_Controller {
         $this->load->view('templates/PiedDePage');
     } // fin afficherTarifs
 
-    public function afficherTraversees($nosecteur = null)
+    public function afficherHorairesTraversees($nosecteur = null)
     {
         $Data['NomPage'] = 'Horaires des traversées';
         $Data['lesSecteurs'] = $this->ModeleSecteur->getSecteurs();
@@ -186,15 +186,14 @@ class Visiteur extends CI_Controller {
         {
             $Data['liaisonChoisie'] = $this->ModeleLiaison->getLiaison($this->input->post('listeLiaisons'));
             $Data['dateChoisie'] = $this->input->post('txtDate');
-            //$Data['a'] = $this->input->post('listeLiaisons');
 
             $lesCategories = $this->ModeleCategorieType->getLesCategories();
-            $lesTraverseesBateaux = $this->ModeleTraversee->getLesTraverseesBateaux($this->input->post('listeLiaisons'), $this->input->post('txtDate'));
+            $lesTraverseesBateaux = $this->ModeleTraversee->getLesTraverseesBateaux($this->input->post('listeLiaisons'), date_create($Data['dateChoisie'])->format('Y-m-d'));
             
             $table = array();           
             foreach($lesTraverseesBateaux as $traversee):
-                $ligne = array();
-                array_push($ligne, $traversee->notraversee, $traversee->dateheuredepart, $traversee->nombateau);
+                $heuredepart = date_create($traversee->dateheuredepart);
+                $ligne = array('notraversee' => $traversee->notraversee, 'heuredepart' => $heuredepart->format('H:i'), 'nombateau' => $traversee->nombateau);
                 foreach($lesCategories as $uneCategorie):
                     $CapMax = $this->ModeleTraversee->getCapaciteMaximale($traversee->notraversee, $uneCategorie->lettrecategorie);
                     $QuantEnr = $this->ModeleTraversee->getQuantiteEnregistree($traversee->notraversee, $uneCategorie->lettrecategorie);
@@ -210,7 +209,7 @@ class Visiteur extends CI_Controller {
                     {$QuantEnr = $QuantEnr->quantiteenregistree; };
                     
                     $placesDispo = intval($CapMax) - intval($QuantEnr);
-                    array_push($ligne, $placesDispo);
+                    $ligne[$uneCategorie->lettrecategorie] = $placesDispo;
                 endforeach;
                 array_push($table, $ligne);
             endforeach;
@@ -220,8 +219,8 @@ class Visiteur extends CI_Controller {
             $this->load->view('templates/Entete', $Data);
             $this->load->view('visiteur/liste_secteurs', $Data);
             $this->load->view('visiteur/liste_liaisons_date', $Data);
-            $this->load->view('visiteur/tableau_traversees', $Data);
+            $this->load->view('visiteur/tableau_horaires_traversees', $Data);
             $this->load->view('templates/PiedDePage');
         }
-    } // fin afficherTraversees
+    } // fin afficherHorairesTraversees
 }

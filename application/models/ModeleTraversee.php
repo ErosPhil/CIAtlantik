@@ -13,7 +13,7 @@ class ModeleTraversee extends CI_Model
         $this->db->from('traversee t, bateau b');
         $this->db->where('t.nobateau = b.nobateau');
         $this->db->where('t.noliaison', $noLiaison);
-        $this->db->like('t.dateheuredepart', $dateTraversee);
+        $this->db->where('t.dateheuredepart LIKE', $dateTraversee."%");
         $query = $this->db->get();
         return $query->result();
     }

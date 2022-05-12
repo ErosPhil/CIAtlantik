@@ -11,8 +11,10 @@
             <td colspan="100%">Période</td>
         </tr>
         <tr>
-            <?php foreach($lesPeriodes as $row):
-                echo '<td>'.$row->datedebut .'<br>'. $row->datefin.'</td>';
+            <?php foreach($lesPeriodes as $unePeriode):
+                $datedebut = date_create($unePeriode->datedebut);
+                $datefin = date_create($unePeriode->datefin);
+                echo '<td>'.$datedebut->format('d/m/Y').'<br>'.$datefin->format('d/m/Y').'</td>';
             endforeach ?>
         </tr>
         <?php

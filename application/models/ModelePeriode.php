@@ -16,4 +16,12 @@ class ModelePeriode extends CI_Model
         return $query->result();
         //SELECT * FROM periode WHERE datefin >= datejour
     }
+
+    public function getPeriodePourDate($date)
+    {
+        $this->db->select('noperiode');
+        $this->db->from('periode');
+        $this->db->where($date.'BETWEEN datedebut AND datefin');
+        return $this->db->get();
+    }
 }
