@@ -115,4 +115,13 @@ class Client extends CI_Controller {
             $this->load->view('templates/PiedDePage');
     } // fin reserverTraversee
 }
+
+public function compte_rendu()
+{
+    $Data['NomPage'] = 'Compte-rendu de la réservation';
+
+    $this->load->view('templates/Entete', $Data);
+    $this->load->view('client/compte_rendu');
+    $this->load->view('templates/PiedDePage');
+}
 ?>
