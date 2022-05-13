@@ -24,7 +24,7 @@ class Client extends CI_Controller {
 
     public function modifierInformations()
     {
-        $Data['NomPage'] = 'Modifier les informations du compte';
+        $DataH['NomPage'] = 'Modifier les informations du compte';
         $this->load->helper('form');
         $this->load->library('form_validation');
 
@@ -51,7 +51,7 @@ class Client extends CI_Controller {
             $Data['TelPortable'] = $Client->telephonemobile;
             $Data['Mel'] = $Client->mel;
             
-            $this->load->view('templates/Entete', $Data);
+            $this->load->view('templates/Entete', $DataH);
             $this->load->view('client/modifierInformations', $Data);
             $this->load->view('templates/PiedDePage');
         }
@@ -71,8 +71,8 @@ class Client extends CI_Controller {
             $Modifications = $this->ModeleClient->modifierInformations($DonneesAInserer, $this->session->noclient);
             if (!($Modifications == null))
             { // SUCCES : on a modifié les informations du client dans la BDD
-                $Data['NomPage'] = 'Modification effectuée';
-                $this->load->view('templates/Entete', $Data);
+                $DataH['NomPage'] = 'Modification effectuée';
+                $this->load->view('templates/Entete', $DataH);
                 $this->load->view('client/modificationReussie');
                 $this->load->view('templates/PiedDePage');
             }
@@ -87,17 +87,17 @@ class Client extends CI_Controller {
 
     public function afficherHistoriqueReservations()
     {
-        $Data['NomPage'] = 'Historique des réservations';
+        $DataH['NomPage'] = 'Historique des réservations';
         $Data['lesReservations'] = $this->ModeleReservation->getReservations($this->session->noclient);
 
-        $this->load->view('templates/Entete', $Data);
+        $this->load->view('templates/Entete', $DataH);
         $this->load->view('client/afficherHistoriqueReservations', $Data);
         $this->load->view('templates/PiedDePage');
     } // fin afficherHistoriqueReservations
 
     public function reserverTraversee($notraversee)
     {
-            $Data['NomPage'] = 'Réserver un traversée';
+            $DataH['NomPage'] = 'Réserver un traversée';
 
             $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
             $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
@@ -110,18 +110,30 @@ class Client extends CI_Controller {
             $this->load->helper('form');
             $this->load->library('form_validation');
 
-            $this->load->view('templates/Entete', $Data);
+            $this->load->view('templates/Entete', $DataH);
             $this->load->view('client/reserverTraversee', $Data);
             $this->load->view('templates/PiedDePage');
     } // fin reserverTraversee
-}
 
-public function compte_rendu()
-{
-    $Data['NomPage'] = 'Compte-rendu de la réservation';
-
-    $this->load->view('templates/Entete', $Data);
-    $this->load->view('client/compte_rendu');
-    $this->load->view('templates/PiedDePage');
+    public function compte_rendu($notraversee)
+    {
+        if ($this->form_validation->run() === FALSE)
+        {
+            redirect('/client/reserverTraversee/'.$notraversee);
+        }
+        else
+        {
+            $DataH['NomPage'] = 'Compte-rendu de la réservation';
+        
+            $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
+            $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
+            $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
+            $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
+            
+            $this->load->view('templates/Entete', $DataH);
+            $this->load->view('client/compte_rendu', $Data);
+            $this->load->view('templates/PiedDePage');
+        }
+    }
 }
 ?>

@@ -19,8 +19,8 @@ class Visiteur extends CI_Controller {
 
     public function accueil()
     {
-        $Data['NomPage'] = 'Accueil';
-        $this->load->view('templates/Entete', $Data);
+        $DataH['NomPage'] = 'Accueil';
+        $this->load->view('templates/Entete', $DataH);
         $this->load->view('visiteur/accueil');
         $this->load->view('templates/PiedDePage');
     } // fin accueil
@@ -53,8 +53,8 @@ class Visiteur extends CI_Controller {
                 $this->session->prenom = $ClientRetourne->prenom;
                 $this->session->noclient = $ClientRetourne->noclient;
 
-                $Data['NomPage'] = 'Connexion réussie !';
-                $this->load->view('templates/Entete', $Data);
+                $DataH['NomPage'] = 'Connexion réussie !';
+                $this->load->view('templates/Entete', $DataH);
                 $this->load->view('client/connexionReussie');
                 $this->load->view('templates/PiedDePage');
             }
@@ -69,16 +69,16 @@ class Visiteur extends CI_Controller {
 
     public function seDeConnecter() 
     { // destruction de la session = déconnexion
-        $Data['NomPage'] = 'Déconnexion réussie !';
+        $DataH['NomPage'] = 'Déconnexion réussie !';
         $this->session->sess_destroy();
-        $this->load->view('templates/Entete', $Data);
+        $this->load->view('templates/Entete', $DataH);
         $this->load->view('visiteur/deconnexionReussie');
         $this->load->view('templates/PiedDePage');
     } // fin seDeconnecter
 
     public function creerCompte()
     {
-        $Data['NomPage'] = 'Créer un compte';
+        $DataH['NomPage'] = 'Créer un compte';
         $this->load->helper('form');
         $this->load->library('form_validation');
 
@@ -94,7 +94,7 @@ class Visiteur extends CI_Controller {
 
         if ($this->form_validation->run() === FALSE)
         { // ECHEC VALIDATION FORMULAIRE ou PREMIER APPEL FORMULAIRE
-            $this->load->view('templates/Entete', $Data);
+            $this->load->view('templates/Entete', $DataH);
             $this->load->view('visiteur/creerCompte');
             $this->load->view('templates/PiedDePage');
         }
@@ -114,8 +114,8 @@ class Visiteur extends CI_Controller {
             $ClientInsere = $this->ModeleClient->insertClient($DonneesAInserer);
             if (!($ClientInsere == null))
             { // SUCCES : on a inséré le client 
-                $Data['NomPage'] = 'Création réussie !';
-                $this->load->view('templates/Entete', $Data);
+                $DataH['NomPage'] = 'Création réussie !';
+                $this->load->view('templates/Entete', $DataH);
                 $this->load->view('visiteur/creationReussie');
                 $this->load->view('templates/PiedDePage');
             }
@@ -130,17 +130,17 @@ class Visiteur extends CI_Controller {
 
     public function afficherLiaisons()
     {
-        $Data['NomPage'] = 'Liste des liaisons pour chaque secteur';
+        $DataH['NomPage'] = 'Liste des liaisons pour chaque secteur';
         $Data['lesLiaisons'] = $this->ModeleLiaison->getLiaisonSec();
 
-        $this->load->view('templates/Entete', $Data);
+        $this->load->view('templates/Entete', $DataH);
         $this->load->view('visiteur/afficherLiaisons', $Data);
         $this->load->view('templates/PiedDePage');
     } // fin afficherLiaisons
 
     public function afficherTarifs($noliaison)
     {
-        $Data['NomPage'] = 'Tarifs pour une liaison';
+        $DataH['NomPage'] = 'Tarifs pour une liaison';
         $dateDuJour = date('y-m-d');
         $Data['Liaison'] = $this->ModeleLiaison->getLiaison($noliaison);
         $Data['lesPeriodes'] = $this->ModelePeriode->getPeriodes($dateDuJour);
@@ -153,14 +153,14 @@ class Visiteur extends CI_Controller {
         $Data['nombreDeLignes'] = $arrayNombre;
         $Data['lesTarifs'] = $this->ModeleLiaison->getTarifs($noliaison);
 
-        $this->load->view('templates/Entete', $Data);
+        $this->load->view('templates/Entete', $DataH);
         $this->load->view('visiteur/afficherTarifs', $Data);
         $this->load->view('templates/PiedDePage');
     } // fin afficherTarifs
 
     public function afficherHorairesTraversees($nosecteur = null)
     {
-        $Data['NomPage'] = 'Horaires des traversées';
+        $DataH['NomPage'] = 'Horaires des traversées';
         $Data['lesSecteurs'] = $this->ModeleSecteur->getSecteurs();
         $Data['nosecteur'] = $nosecteur;
         $liaisonsDuSecteur = $this->ModeleLiaison->getLiaisonS($nosecteur);
@@ -177,7 +177,7 @@ class Visiteur extends CI_Controller {
         
         if ($this->form_validation->run() === FALSE)
         {
-            $this->load->view('templates/Entete', $Data);
+            $this->load->view('templates/Entete', $DataH);
             $this->load->view('visiteur/liste_secteurs', $Data);
             $this->load->view('visiteur/liste_liaisons_date', $Data);
             $this->load->view('templates/PiedDePage');
@@ -216,7 +216,7 @@ class Visiteur extends CI_Controller {
             $Data['table'] = $table;
             $Data['lesCategories'] = $lesCategories;
 
-            $this->load->view('templates/Entete', $Data);
+            $this->load->view('templates/Entete', $DataH);
             $this->load->view('visiteur/liste_secteurs', $Data);
             $this->load->view('visiteur/liste_liaisons_date', $Data);
             $this->load->view('visiteur/tableau_horaires_traversees', $Data);

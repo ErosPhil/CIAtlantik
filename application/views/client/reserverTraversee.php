@@ -13,7 +13,7 @@ echo "<br>Saisir les informations relatives à la réservation <br><br> Nom : ".
     <tbody>
         <?php
         echo validation_errors();
-        echo form_open('client/compte_rendu');
+        echo form_open('client/compte_rendu/'.$traversee->notraversee);
         foreach($TypesEtTarifs as $ligne):
             echo "<tr><td>".$ligne->libelle."</td><td>".$ligne->tarif."</td><td>".form_input('txt'.$ligne->lettrecategorie.$ligne->notype, set_value('txt'.$ligne->lettrecategorie.$ligne->notype))."</td></tr>";
         endforeach;
