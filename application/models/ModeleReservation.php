@@ -7,15 +7,33 @@ class ModeleReservation extends CI_Model
         $this->load->database();
     }
 
-    public function getReservations($noclient)
+    public function retournerReservationsLimite($nombreDeLignesARetourner, $noPremiereLigneARetourner, $noClient)
     {
+        $this->db->limit($nombreDeLignesARetourner, $noPremiereLigneARetourner);
         $this->db->select('r.noreservation, r.dateheure, pd.nom AS nomportdepart, pa.nom AS nomportarrivee, t.dateheuredepart, r.montanttotal, r.paye');
         $this->db->from('reservation r, traversee t, liaison l, port pd, port pa');
         $this->db->where('r.notraversee = t.notraversee AND t.noliaison = l.noliaison AND l.noport_depart = pd.noport AND l.noport_arrivee = pa.noport');
-        $this->db->where('noclient', $noclient);
+        $this->db->where('noclient', $noClient);
         $query = $this->db->get();
         return $query->result();
-        //SELECT r.noreservation, r.dateheure, pd.nom, pa.nom, t.dateheuredepart, r.montanttotal, r.paye FROM reservation r, traversee t, liaison l, port pd, port pa WHERE r.notraversee = t.notraversee AND t.noliaison = l.noliaison AND l.noport_depart = pd.noport AND l.noport_arrivee = pa.noport AND r.noclient = x
     }
 
+    public function nombreDeReservations($noClient)
+    {
+        /*$this->db->count_all();
+        $this->db->from('reservation');
+        $this->db->where('noclient', $noClient);
+        $query = $this->db->get();*/
+        return $this->db->count_all("reservation");
+    }
+
+    public function reserver($DonneesDeReservation)
+    {
+        return $this->db->insert('reservation', $DonneesDeReservation);
+    }
+
+    public function enregistrer($DonneesDEnregistrement)
+    {
+        return $this->db->insert('enregistrer', $DonneesDEnregistrement);
+    }
 }

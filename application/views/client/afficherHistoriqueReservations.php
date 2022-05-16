@@ -26,6 +26,8 @@
                     if($row->paye = 1){ echo "Oui"; } else { echo "Non"; } 
                     echo '</td>
                 </tr>';
-        endforeach ?>
+        endforeach;
+        echo $liensPagination;
+        ?>
     </tbody>
 </table>

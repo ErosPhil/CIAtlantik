@@ -4,11 +4,11 @@ class Client extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->load->library("session");
         $this->load->helper('url');
         $this->load->helper('assets');
         $this->load->helper('date');
         $this->load->library("pagination");
+        $this->load->library("session");
         $this->load->model("ModeleClient");
         $this->load->model("ModeleReservation");
         $this->load->model("ModeleTraversee");
@@ -71,6 +71,9 @@ class Client extends CI_Controller {
             $Modifications = $this->ModeleClient->modifierInformations($DonneesAInserer, $this->session->noclient);
             if (!($Modifications == null))
             { // SUCCES : on a modifié les informations du client dans la BDD
+                $this->session->nom = $DonneesAInserer['nom'];
+                $this->session->prenom = $DonneesAInserer['prenom'];
+                $this->session->identifiant = $DonneesAInserer['mel'];
                 $DataH['NomPage'] = 'Modification effectuée';
                 $this->load->view('templates/Entete', $DataH);
                 $this->load->view('client/modificationReussie');
@@ -79,7 +82,7 @@ class Client extends CI_Controller {
             else
             { // ECHEC : on n'a pas pu modifier les informations de la BDD
                 $this->load->view('templates/Entete');
-                $this->load->view('client/modifierInformations');
+                $this->load->view('client/modifierInformations', $Data);
                 $this->load->view('templates/PiedDePage');
             }
         }
@@ -88,7 +91,27 @@ class Client extends CI_Controller {
     public function afficherHistoriqueReservations()
     {
         $DataH['NomPage'] = 'Historique des réservations';
-        $Data['lesReservations'] = $this->ModeleReservation->getReservations($this->session->noclient);
+        
+        $config = array();
+        $config["base_url"] = site_url('client/afficherHistoriqueReservations');
+        $config["total_rows"] = $this->ModeleReservation->nombreDeReservations($this->session->noclient);
+        $config["per_page"] = 4;
+        $config["uri_segment"] = 3; /* le n° de la page sera placé sur le segment n°3 de URI,
+        pour la page 4 on aura : visiteur/listerLesArticlesAvecPagination/4 */ 
+
+        /*$config['first_link'] = 'Premier';
+        $config['last_link'] = 'Dernier';*/
+        $config['next_link'] = '=>';
+        $config['prev_link'] = '<=';
+
+        $this->pagination->initialize($config);
+
+        $noPage = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0; 
+        /* on récupère le n° de la page - segment 3 - si ce segment est vide, cas du premier appel 
+        de la méthode, on affecte 0 à $noPage */
+        
+        $Data["lesReservations"] = $this->ModeleReservation->retournerReservationsLimite($config["per_page"], $noPage, $this->session->noclient);
+        $Data["liensPagination"] = $this->pagination->create_links();
 
         $this->load->view('templates/Entete', $DataH);
         $this->load->view('client/afficherHistoriqueReservations', $Data);
@@ -110,19 +133,67 @@ class Client extends CI_Controller {
             $this->load->helper('form');
             $this->load->library('form_validation');
 
-            $this->load->view('templates/Entete', $DataH);
-            $this->load->view('client/reserverTraversee', $Data);
-            $this->load->view('templates/PiedDePage');
+            foreach($Data['TypesEtTarifs'] as $ligne):
+                $this->form_validation->set_rules('txt'.$ligne->lettrecategorie.$ligne->notype, $ligne->lettrecategorie.$ligne->notype, 'integer');
+            endforeach;
+
+            if ($this->form_validation->run() === FALSE)
+            {
+                $this->load->view('templates/Entete', $DataH);
+                $this->load->view('client/reserverTraversee', $Data);
+                $this->load->view('templates/PiedDePage');
+            }
+            else
+            {
+
+                $DonneesAInserer = array();
+                $coutTotal = 0;
+                //'nom' => $this->input->post('txtNom')
+                foreach($Data['TypesEtTarifs'] as $ligne):
+                    $quantiteEnregistree = $this->input->post('txt'.$ligne->lettrecategorie.$ligne->notype);
+                    if(!($quantiteEnregistree == null))
+                    {
+                        $coutTotal += $ligne->tarif * $quantiteEnregistree;
+                    }
+                endforeach;
+
+                $DonneesReservation = array(
+                    'notraversee' => $notraversee,
+                    'noclient' => $this->session->noclient,
+                    'dateheure' => date('y-m-d h:i:s'),
+                    'montanttotal' => $coutTotal,
+                    'paye' => false,
+                    'modereglement' => null
+                );
+                $reservation = $this->ModeleReservation->reserver($DonneesReservation);
+
+                if(!($reservation == null))
+                { // SUCCES
+                    $lastInsertId = $reservation->lastInsertId();
+                    foreach($Data['TypesEtTarifs'] as $ligne):
+                        $quantiteEnregistree = $this->input->post('txt'.$ligne->lettrecategorie.$ligne->notype);
+                        if($quantiteEnregistree == null){$quantiteEnregistree = 0;}
+                        $DonneesEnregistrement = array(
+                            'noreservation' => $lastInsertId,
+                            'lettrecategorie' => $ligne->lettrecategorie,
+                            'notype' => $ligne->notype,
+                            'quantite' => 
+                        );
+                    endforeach;
+                }
+                else
+                { // ECHEC
+                    $this->load->view('templates/Entete');
+                    $this->load->view('client/modifierInformations/'.$notraversee);
+                    $this->load->view('templates/PiedDePage');
+                }
+            }
     } // fin reserverTraversee
 
     public function compte_rendu($notraversee)
-    {
-        if ($this->form_validation->run() === FALSE)
-        {
-            redirect('/client/reserverTraversee/'.$notraversee);
-        }
-        else
-        {
+    {      
+        //redirect('/client/reserverTraversee/'.$notraversee);
+        
             $DataH['NomPage'] = 'Compte-rendu de la réservation';
         
             $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
@@ -133,7 +204,6 @@ class Client extends CI_Controller {
             $this->load->view('templates/Entete', $DataH);
             $this->load->view('client/compte_rendu', $Data);
             $this->load->view('templates/PiedDePage');
-        }
     }
 }
 ?>
