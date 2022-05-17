@@ -162,14 +162,15 @@ class Client extends CI_Controller {
                     'noclient' => $this->session->noclient,
                     'dateheure' => date('y-m-d h:i:s'),
                     'montanttotal' => $coutTotal,
-                    'paye' => false,
+                    'paye' => true,
                     'modereglement' => null
                 );
-                $reservation = $this->ModeleReservation->reserver($DonneesReservation);
+                $lastInsertId = $this->ModeleReservation->reserver($DonneesReservation);
 
-                if(!($reservation == null))
+                if($lastInsertId != false)
                 { // SUCCES
-                    $lastInsertId = $reservation->lastInsertId();
+                    $enregistrements = array();
+                    
                     foreach($Data['TypesEtTarifs'] as $ligne):
                         $quantiteEnregistree = $this->input->post('txt'.$ligne->lettrecategorie.$ligne->notype);
                         if($quantiteEnregistree == null){$quantiteEnregistree = 0;}
@@ -177,14 +178,19 @@ class Client extends CI_Controller {
                             'noreservation' => $lastInsertId,
                             'lettrecategorie' => $ligne->lettrecategorie,
                             'notype' => $ligne->notype,
-                            'quantite' => 
+                            'quantite' => $quantiteEnregistree
                         );
+                        $enregistrements[$ligne->lettrecategorie.$ligne->notype] = $this->ModeleReservation->enregistrer($DonneesEnregistrement);
                     endforeach;
+
+                    $this->load->view('templates/Entete');
+                    $this->load->view('client/compte_rendu/');
+                    $this->load->view('templates/PiedDePage');
                 }
                 else
                 { // ECHEC
                     $this->load->view('templates/Entete');
-                    $this->load->view('client/modifierInformations/'.$notraversee);
+                    $this->load->view('client/modifierInformations/');
                     $this->load->view('templates/PiedDePage');
                 }
             }

@@ -29,7 +29,14 @@ class ModeleReservation extends CI_Model
 
     public function reserver($DonneesDeReservation)
     {
-        return $this->db->insert('reservation', $DonneesDeReservation);
+        if(($this->db->insert('reservation', $DonneesDeReservation)) == true)
+        {
+            return $this->db->insert_id();
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public function enregistrer($DonneesDEnregistrement)
