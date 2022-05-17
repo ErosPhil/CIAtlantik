@@ -20,10 +20,7 @@ class ModeleReservation extends CI_Model
 
     public function nombreDeReservations($noClient)
     {
-        /*$this->db->count_all();
-        $this->db->from('reservation');
         $this->db->where('noclient', $noClient);
-        $query = $this->db->get();*/
         return $this->db->count_all("reservation");
     }
 

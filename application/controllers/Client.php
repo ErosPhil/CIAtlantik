@@ -165,9 +165,9 @@ class Client extends CI_Controller {
                     'paye' => true,
                     'modereglement' => null
                 );
-                $lastInsertId = $this->ModeleReservation->reserver($DonneesReservation);
+                $Data['lastInsertId'] = $this->ModeleReservation->reserver($DonneesReservation);
 
-                if($lastInsertId != false)
+                if($Data['lastInsertId'] != false)
                 { // SUCCES
                     $enregistrements = array();
                     
@@ -175,17 +175,15 @@ class Client extends CI_Controller {
                         $quantiteEnregistree = $this->input->post('txt'.$ligne->lettrecategorie.$ligne->notype);
                         if($quantiteEnregistree == null){$quantiteEnregistree = 0;}
                         $DonneesEnregistrement = array(
-                            'noreservation' => $lastInsertId,
+                            'noreservation' => $Data['lastInsertId'],
                             'lettrecategorie' => $ligne->lettrecategorie,
                             'notype' => $ligne->notype,
                             'quantite' => $quantiteEnregistree
                         );
                         $enregistrements[$ligne->lettrecategorie.$ligne->notype] = $this->ModeleReservation->enregistrer($DonneesEnregistrement);
                     endforeach;
-
-                    $this->load->view('templates/Entete');
-                    $this->load->view('client/compte_rendu/');
-                    $this->load->view('templates/PiedDePage');
+                    
+                    redirect('/client/compte_rendu/'.$notraversee);
                 }
                 else
                 { // ECHEC
@@ -197,8 +195,7 @@ class Client extends CI_Controller {
     } // fin reserverTraversee
 
     public function compte_rendu($notraversee)
-    {      
-        //redirect('/client/reserverTraversee/'.$notraversee);
+    {
         
             $DataH['NomPage'] = 'Compte-rendu de la réservation';
         
@@ -206,6 +203,7 @@ class Client extends CI_Controller {
             $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
             $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
             $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
+            
             
             $this->load->view('templates/Entete', $DataH);
             $this->load->view('client/compte_rendu', $Data);
