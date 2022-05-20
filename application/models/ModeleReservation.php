@@ -40,4 +40,20 @@ class ModeleReservation extends CI_Model
     {
         return $this->db->insert('enregistrer', $DonneesDEnregistrement);
     }
+
+    public function getReservation($noReservation)
+    {
+        $requete = $this->db->get_where('reservation', array('noreservation' => $noReservation));
+        return $requete->row();
+    }
+
+    public function getEnregistrements($noReservation)
+    {
+        $this->db->select('e.noreservation, e.quantite, t.lettrecategorie, t.notype, t.libelle');
+        $this->db->from('enregistrer e, type t');
+        $this->db->where('e.lettrecategorie = t.lettrecategorie AND e.notype = t.notype');
+        $this->db->where('noreservation', $noReservation);
+        $query = $this->db->get();
+        return $query->result();
+    }
 }

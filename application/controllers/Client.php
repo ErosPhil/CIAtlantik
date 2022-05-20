@@ -99,8 +99,8 @@ class Client extends CI_Controller {
         $config["uri_segment"] = 3; /* le n° de la page sera placé sur le segment n°3 de URI,
         pour la page 4 on aura : visiteur/listerLesArticlesAvecPagination/4 */ 
 
-        /*$config['first_link'] = 'Premier';
-        $config['last_link'] = 'Dernier';*/
+        $config['first_link'] = 'Premier';
+        $config['last_link'] = 'Dernier';
         $config['next_link'] = '=>';
         $config['prev_link'] = '<=';
 
@@ -183,18 +183,18 @@ class Client extends CI_Controller {
                         $enregistrements[$ligne->lettrecategorie.$ligne->notype] = $this->ModeleReservation->enregistrer($DonneesEnregistrement);
                     endforeach;
                     
-                    redirect('/client/compte_rendu/'.$notraversee);
+                    redirect('/client/compte_rendu/'.$notraversee.'/'.$Data['lastInsertId']);
                 }
                 else
                 { // ECHEC
                     $this->load->view('templates/Entete');
-                    $this->load->view('client/modifierInformations/');
+                    $this->load->view('client/modifierInformations');
                     $this->load->view('templates/PiedDePage');
                 }
             }
     } // fin reserverTraversee
 
-    public function compte_rendu($notraversee)
+    public function compte_rendu($notraversee, $noReservation)
     {
         
             $DataH['NomPage'] = 'Compte-rendu de la réservation';
@@ -203,11 +203,12 @@ class Client extends CI_Controller {
             $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
             $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
             $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
-            
-            
+            $Data['reservation'] = $this->ModeleReservation->getReservation($noReservation);
+            $Data['enregistrements'] = $this->ModeleReservation->getEnregistrements($noReservation);
+
             $this->load->view('templates/Entete', $DataH);
             $this->load->view('client/compte_rendu', $Data);
             $this->load->view('templates/PiedDePage');
-    }
+    } // fin compte_rendu
 }
 ?>
