@@ -195,8 +195,8 @@ class Visiteur extends CI_Controller {
                 $heuredepart = date_create($traversee->dateheuredepart);
                 $ligne = array('notraversee' => $traversee->notraversee, 'heuredepart' => $heuredepart->format('H:i'), 'nombateau' => $traversee->nombateau);
                 foreach($lesCategories as $uneCategorie):
-                    $CapMax = $this->ModeleTraversee->getCapaciteMaximale($traversee->notraversee, $uneCategorie->lettrecategorie);
-                    $QuantEnr = $this->ModeleTraversee->getQuantiteEnregistree($traversee->notraversee, $uneCategorie->lettrecategorie);
+                    $CapMax = $this->ModeleTraversee->getCapaciteMaximale($traversee->notraversee, $uneCategorie->lettrecategorie); //Capacité max de la catégorie
+                    $QuantEnr = $this->ModeleTraversee->getQuantiteEnregistree($traversee->notraversee, $uneCategorie->lettrecategorie); //Quantité enregistrée pour cette catégorie de la traversée
 
                     if ($CapMax == null) 
                     {$CapMax = False;}

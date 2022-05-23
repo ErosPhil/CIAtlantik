@@ -120,37 +120,60 @@ class Client extends CI_Controller {
 
     public function reserverTraversee($notraversee)
     {
-            $DataH['NomPage'] = 'Réserver un traversée';
+        $DataH['NomPage'] = 'Réserver un traversée';
 
-            $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
-            $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
-            $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
-            $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
-            $datedepart = date_create($Data['traversee']->dateheuredepart)->format('Y-m-d');
-            $noperiode = $this->ModelePeriode->getPeriodePourDate($datedepart);
-            $Data['TypesEtTarifs'] = $this->ModeleCategorieType->getLesTypesAvecTarifs($Data['traversee']->noliaison, $noperiode);
-            
-            $this->load->helper('form');
-            $this->load->library('form_validation');
+        $Data['traversee'] = $this->ModeleTraversee->getTraversee($notraversee);
+        $Data['liaison'] = $this->ModeleLiaison->getLiaison($Data['traversee']->noliaison);
+        $Data['client'] = $this->ModeleClient->getClientN($this->session->noclient);
+        $Data['dateheuredepart'] = date_create($Data['traversee']->dateheuredepart);
+        $datedepart = date_create($Data['traversee']->dateheuredepart)->format('Y-m-d');
+        $noperiode = $this->ModelePeriode->getPeriodePourDate($datedepart);
+        $Data['TypesEtTarifs'] = $this->ModeleCategorieType->getLesTypesAvecTarifs($Data['traversee']->noliaison, $noperiode);
+        
+        $this->load->helper('form');
+        $this->load->library('form_validation');
 
-            foreach($Data['TypesEtTarifs'] as $ligne):
-                $this->form_validation->set_rules('txt'.$ligne->lettrecategorie.$ligne->notype, $ligne->lettrecategorie.$ligne->notype, 'integer');
+        foreach($Data['TypesEtTarifs'] as $ligne):
+            $this->form_validation->set_rules('txt'.$ligne->lettrecategorie.$ligne->notype, $ligne->lettrecategorie.$ligne->notype, 'integer');
+        endforeach;
+
+        if ($this->form_validation->run() === FALSE)
+        {
+            $this->load->view('templates/Entete', $DataH);
+            $this->load->view('client/reserverTraversee', $Data);
+            $this->load->view('templates/PiedDePage');
+        }
+        else
+        {
+            $lesCategories = $this->ModeleCategorieType->getLesCategories();
+            $vide = True;
+            $possible = True;
+            foreach($lesCategories as $uneCategorie):
+                $CapMax = $this->ModeleTraversee->getCapaciteMaximale($notraversee, $uneCategorie->lettrecategorie); //Capacité max de la catégorie
+                $QuantEnr = $this->ModeleTraversee->getQuantiteEnregistree($notraversee, $uneCategorie->lettrecategorie); //Quantité enregistrée pour cette catégorie de la traversée
+                if($CapMax != null)
+                {
+                    $quantiteAAjouter = 0;
+                    
+                    foreach($Data['TypesEtTarifs'] as $uneCategorieType):
+                        $quantiteEnregistree = $this->input->post('txt'.$uneCategorieType->lettrecategorie.$uneCategorieType->notype); //Quantité que l'on souhaite enregistrer depuis le formulaire
+                        if($uneCategorieType->lettrecategorie == $uneCategorie->lettrecategorie && $quantiteEnregistree != null)
+                        {
+                            $quantiteAAjouter += intval($quantiteEnregistree);
+                            $vide = False;
+                        }
+                    endforeach;
+                    $placesDispo = intval($CapMax->capacitemax) - intval($QuantEnr->quantiteenregistree) - $quantiteAAjouter;
+                    if($placesDispo < 0) { $possible = False; }
+                }
             endforeach;
-
-            if ($this->form_validation->run() === FALSE)
+            
+            if($possible && !($vide))
             {
-                $this->load->view('templates/Entete', $DataH);
-                $this->load->view('client/reserverTraversee', $Data);
-                $this->load->view('templates/PiedDePage');
-            }
-            else
-            {
-
                 $DonneesAInserer = array();
                 $coutTotal = 0;
-                //'nom' => $this->input->post('txtNom')
                 foreach($Data['TypesEtTarifs'] as $ligne):
-                    $quantiteEnregistree = $this->input->post('txt'.$ligne->lettrecategorie.$ligne->notype);
+                    $quantiteEnregistree = $this->input->post('txt'.$ligne->lettrecategorie.$ligne->notype); //Quantité que l'on souhaite enregistrer depuis le formulaire
                     if(!($quantiteEnregistree == null))
                     {
                         $coutTotal += $ligne->tarif * $quantiteEnregistree;
@@ -187,11 +210,20 @@ class Client extends CI_Controller {
                 }
                 else
                 { // ECHEC
+                    $Data['message'] = "Erreur lors de l'insertion de la réservation";
                     $this->load->view('templates/Entete');
-                    $this->load->view('client/modifierInformations');
+                    $this->load->view('client/reserverTraversee', $Data);
                     $this->load->view('templates/PiedDePage');
                 }
             }
+            else
+            {
+                $Data['message'] = "Enregistrement impossible: il ne reste pas assez de places pour une des catégories ou vous n'avez pas renseigné au minimum 1 champs";
+                $this->load->view('templates/Entete');
+                $this->load->view('client/reserverTraversee', $Data);
+                $this->load->view('templates/PiedDePage');
+            }
+        }
     } // fin reserverTraversee
 
     public function compte_rendu($notraversee, $noReservation)
