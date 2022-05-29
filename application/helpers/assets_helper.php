@@ -18,9 +18,9 @@ if ( ! function_exists('js_url'))
 
 if ( ! function_exists('img'))
 {
-    function img($nom, $alt = '')
+    function img($nom, $alt = '', $width = '', $height = '')
     {
-        return '<img src="' . img_url($nom) . '" alt="' . $alt . '" />';
+        return '<img src="' . img_url($nom) . '" alt="' . $alt . '" width="' . $width . '" height="' . $height . '" />';
     }
 }
   
