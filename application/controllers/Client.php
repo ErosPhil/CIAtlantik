@@ -98,11 +98,12 @@ class Client extends CI_Controller {
         $config["per_page"] = 4;
         $config["uri_segment"] = 3; /* le n° de la page sera placé sur le segment n°3 de URI,
         pour la page 4 on aura : visiteur/listerLesArticlesAvecPagination/4 */ 
-
-        $config['first_link'] = 'Premier';
-        $config['last_link'] = 'Dernier';
-        $config['next_link'] = '=>';
-        $config['prev_link'] = '<=';
+        
+        $config['first_link'] = '1';
+        $pageMax = $config['total_rows'] / $config["per_page"];
+        $config['last_link'] = $pageMax;
+        $config['next_link'] = '>';
+        $config['prev_link'] = '<';
 
         $this->pagination->initialize($config);
 

@@ -1,5 +1,5 @@
 <html>
-    <div class="col-sm">
+    <div class="col-sm-12">
         <div id="myCarousel" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -9,7 +9,7 @@
 
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <?php echo img('Groix.jpg','Image1','100%','800'); ?>
+                    <?php echo img('Groix.jpg','Image1','1600','700'); ?>
                     <div class="carousel-caption d-none d-md-block">
                         <h5 style="color: white">Île de Groix</h5>
                         <p style="color: white">Morbihan</p>
@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="carousel-item">
-                    <?php echo img('Baie_Quiberon.jpg','Image2','100%','800'); ?>
+                    <?php echo img('Baie_Quiberon.jpg','Image2','1600','700'); ?>
                     <div class="carousel-caption d-none d-md-block">
                         <h5 style="color: black">Baie de Quiberon</h5>
                         <p style="color: black">Morbihan</p>
@@ -25,7 +25,7 @@
                 </div>
                 
                 <div class="carousel-item">
-                    <?php echo img('sauzon_1.jpg','Image3','100%','800'); ?>
+                    <?php echo img('sauzon_1.jpg','Image3','1600','700'); ?>
                     <div class="carousel-caption d-none d-md-block">
                         <h5 style="color: white">Sauzon</h5>
                         <p style="color: white">Morbihan</p>

@@ -2,7 +2,7 @@
     <?php
         echo $liaisonChoisie->nomportdepart.' - '.$liaisonChoisie->nomportarrivee.'.<br>Traversées pour le '.date_create($dateChoisie)->format('d/m/Y').'. Sélectionner la traversée souhaitée';
     ?>
-    <table class="table table-bordered">
+    <table class="table">
         <thead>
             <tr>
                 <th colspan="3">Traversée</th>
