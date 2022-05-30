@@ -9,19 +9,25 @@ class ModeleReservation extends CI_Model
 
     public function retournerReservationsLimite($nombreDeLignesARetourner, $noPremiereLigneARetourner, $noClient)
     {
-        $this->db->limit($nombreDeLignesARetourner, $noPremiereLigneARetourner);
         $this->db->select('r.noreservation, r.dateheure, pd.nom AS nomportdepart, pa.nom AS nomportarrivee, t.dateheuredepart, r.montanttotal, r.paye');
+        $this->db->limit($nombreDeLignesARetourner, $noPremiereLigneARetourner);
         $this->db->from('reservation r, traversee t, liaison l, port pd, port pa');
         $this->db->where('r.notraversee = t.notraversee AND t.noliaison = l.noliaison AND l.noport_depart = pd.noport AND l.noport_arrivee = pa.noport');
         $this->db->where('noclient', $noClient);
+        $this->db->order_by('r.noreservation');
         $query = $this->db->get();
+        /*var_dump($query->result());
+        echo "/////////////////////";*/
         return $query->result();
     }
 
     public function nombreDeReservations($noClient)
     {
+        $this->db->select("count(*) AS nombre");
+        $this->db->from('reservation');
         $this->db->where('noclient', $noClient);
-        return $this->db->count_all("reservation");
+        $query = $this->db->get();
+        return $query->row();
     }
 
     public function reserver($DonneesDeReservation)

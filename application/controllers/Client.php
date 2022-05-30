@@ -94,16 +94,15 @@ class Client extends CI_Controller {
         
         $config = array();
         $config["base_url"] = site_url('client/afficherHistoriqueReservations');
-        $config["total_rows"] = $this->ModeleReservation->nombreDeReservations($this->session->noclient);
+        $config["total_rows"] = intval($this->ModeleReservation->nombreDeReservations($this->session->noclient)->nombre);
         $config["per_page"] = 4;
-        $config["uri_segment"] = 3; /* le n° de la page sera placé sur le segment n°3 de URI,
-        pour la page 4 on aura : visiteur/listerLesArticlesAvecPagination/4 */ 
+        $config["uri_segment"] = 3; /* le n° de la page sera placé sur le segment n°3 de URI*/ 
         
         $config['first_link'] = '1';
         $pageMax = $config['total_rows'] / $config["per_page"];
         $config['last_link'] = $pageMax;
-        $config['next_link'] = '>';
-        $config['prev_link'] = '<';
+        $config['next_link'] = '>>';
+        $config['prev_link'] = '<<';
 
         $this->pagination->initialize($config);
 
