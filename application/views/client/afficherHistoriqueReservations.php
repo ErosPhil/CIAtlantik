@@ -1,5 +1,13 @@
 <div class="col-lg-12">
     <div class="container">
+        <?php
+        if($lesReservations == null)
+        { 
+            ?><div class="alert alert-primary" role="alert">Vous n'avez passé aucune réservation jusqu'à présent.</div> <?php
+        }
+        else
+        {
+        ?>
         <table class="table">
             <thead>
                 <tr>
@@ -30,6 +38,7 @@
                         </tr>';
                 endforeach;
                 echo $liensPagination;
+            }
                 ?>
             </tbody>
         </table>
